@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'app_theme.dart';
+import 'neo_widgets.dart';
 
 class WorkoutPage extends StatefulWidget {
   const WorkoutPage({super.key});
@@ -55,20 +56,17 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
     try {
       final client = HttpClient();
-
       final request = await client.postUrl(
         Uri.parse('http://localhost:3000/workouts'),
       );
 
       request.headers.set(HttpHeaders.contentTypeHeader, 'application/json');
 
-      request.write(
-        jsonEncode({
-          'exercise': normalizedExercise,
-          'weight': weight,
-          'reps': reps,
-        }),
-      );
+      request.write(jsonEncode({
+        'exercise': normalizedExercise,
+        'weight': weight,
+        'reps': reps,
+      }));
 
       final response = await request.close();
       final responseBody = await response.transform(utf8.decoder).join();
@@ -94,40 +92,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
     }
   }
 
-  Widget buildNeoTextField({
-    required BuildContext context,
-    required TextEditingController controller,
-    required String label,
-    required IconData icon,
-    TextInputType keyboardType = TextInputType.text,
-  }) {
-    final scheme = Theme.of(context).colorScheme;
-
-    return Container(
-      decoration: BoxDecoration(
-        color: neoSurfaceColor(context),
-        borderRadius: BorderRadius.circular(22),
-        boxShadow: neoShadows(context),
-      ),
-      child: TextField(
-        controller: controller,
-        keyboardType: keyboardType,
-        style: TextStyle(color: scheme.onSurface, fontWeight: FontWeight.w600),
-        decoration: InputDecoration(
-          prefixIcon: Icon(icon, color: scheme.primary),
-          labelText: label,
-          border: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          focusedBorder: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 18,
-            vertical: 18,
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   void dispose() {
     exerciseController.dispose();
@@ -138,25 +102,15 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final textColor = neoPrimaryTextColor(context);
-    final subTextColor = neoSecondaryTextColor(context);
-    final accentColor = neoAccentColor(context);
-    final cardColor = neoSurfaceColor(context);
-
-    final bool isSuccess = message.toLowerCase().contains('success');
+    final isSuccess = message.toLowerCase().contains('success');
 
     return Padding(
       padding: const EdgeInsets.all(16),
       child: ListView(
         children: [
-          Container(
+          NeoSurface(
             padding: const EdgeInsets.all(22),
-            decoration: BoxDecoration(
-              color: cardColor,
-              borderRadius: BorderRadius.circular(28),
-              boxShadow: neoShadows(context),
-            ),
+            radius: 28,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -165,7 +119,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: textColor,
+                    color: neoPrimaryTextColor(context),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -173,88 +127,49 @@ class _WorkoutPageState extends State<WorkoutPage> {
                   'Track your exercise, weight, and reps',
                   style: TextStyle(
                     fontSize: 14,
-                    color: subTextColor,
+                    color: neoSecondaryTextColor(context),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
                 const SizedBox(height: 22),
-                buildNeoTextField(
-                  context: context,
+                NeoTextField(
                   controller: exerciseController,
                   label: 'Exercise',
                   icon: Icons.fitness_center,
                 ),
                 const SizedBox(height: 16),
-                buildNeoTextField(
-                  context: context,
+                NeoTextField(
                   controller: weightController,
                   label: 'Weight',
                   icon: Icons.monitor_weight_outlined,
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 16),
-                buildNeoTextField(
-                  context: context,
+                NeoTextField(
                   controller: repsController,
                   label: 'Reps',
                   icon: Icons.repeat,
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 22),
-                SizedBox(
-                  width: double.infinity,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: cardColor,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        ...neoShadows(context, distance: 7, blur: 16),
-                      ],
-                    ),
-                    child: ElevatedButton(
-                      onPressed: saveWorkout,
-                      style:
-                          ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            foregroundColor: accentColor,
-                            shadowColor: Colors.transparent,
-                            surfaceTintColor: Colors.transparent,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(vertical: 18),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                          ).copyWith(
-                            overlayColor: const WidgetStatePropertyAll(
-                              Colors.transparent,
-                            ),
-                          ),
-                      child: Text(
-                        'Save Workout',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: accentColor,
-                        ),
-                      ),
-                    ),
-                  ),
+                NeoPrimaryButton(
+                  text: 'Save Workout',
+                  icon: Icons.save_rounded,
+                  onPressed: saveWorkout,
                 ),
                 if (message.isNotEmpty) ...[
                   const SizedBox(height: 16),
-                  Container(
-                    width: double.infinity,
+                  NeoSurface(
                     padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      color: cardColor,
-                      borderRadius: BorderRadius.circular(18),
-                      boxShadow: neoShadows(context, distance: 5, blur: 10),
-                    ),
+                    radius: 18,
+                    shadows: neoShadows(context, distance: 5, blur: 10),
                     child: Text(
                       message,
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: isSuccess ? Colors.green.shade700 : scheme.error,
+                        color: isSuccess
+                            ? Colors.green.shade700
+                            : Theme.of(context).colorScheme.error,
                         fontWeight: FontWeight.w600,
                       ),
                     ),

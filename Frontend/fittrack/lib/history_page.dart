@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'app_theme.dart';
+import 'neo_widgets.dart';
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});
@@ -58,15 +59,11 @@ class _HistoryPageState extends State<HistoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final textColor = neoPrimaryTextColor(context);
-    final subTextColor = neoSecondaryTextColor(context);
-    final accentColor = neoAccentColor(context);
-    final cardColor = neoSurfaceColor(context);
-
     if (loading) {
       return Center(
-        child: CircularProgressIndicator(color: accentColor),
+        child: CircularProgressIndicator(
+          color: neoAccentColor(context),
+        ),
       );
     }
 
@@ -74,18 +71,13 @@ class _HistoryPageState extends State<HistoryPage> {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(20),
-          child: Container(
+          child: NeoSurface(
             padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: cardColor,
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: neoShadows(context),
-            ),
             child: Text(
               error,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: scheme.error,
+                color: Theme.of(context).colorScheme.error,
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
@@ -99,17 +91,12 @@ class _HistoryPageState extends State<HistoryPage> {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(20),
-          child: Container(
+          child: NeoSurface(
             padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: cardColor,
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: neoShadows(context),
-            ),
             child: Text(
               'No workouts yet',
               style: TextStyle(
-                color: textColor,
+                color: neoPrimaryTextColor(context),
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
               ),
@@ -121,64 +108,48 @@ class _HistoryPageState extends State<HistoryPage> {
 
     return RefreshIndicator(
       onRefresh: fetchWorkouts,
-      color: accentColor,
+      color: neoAccentColor(context),
       child: ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(20),
         itemCount: workouts.length,
         itemBuilder: (context, index) {
           final workout = workouts[index];
 
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 18),
-            child: Container(
-              padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(
-                color: cardColor,
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: neoShadows(context),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      color: cardColor,
-                      shape: BoxShape.circle,
-                      boxShadow: neoShadows(context, distance: 5, blur: 10),
-                    ),
-                    child: Icon(
-                      Icons.fitness_center,
-                      color: accentColor,
-                      size: 24,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          workout['exercise'].toString(),
-                          style: TextStyle(
-                            color: textColor,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
+          return NeoSurface(
+            margin: const EdgeInsets.only(bottom: 18),
+            padding: const EdgeInsets.all(18),
+            child: Row(
+              children: [
+                const NeoIconTile(
+                  icon: Icons.fitness_center,
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        workout['exercise'].toString(),
+                        style: TextStyle(
+                          color: neoPrimaryTextColor(context),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
-                        const SizedBox(height: 6),
-                        Text(
-                          'Weight: ${workout['weight']} | Reps: ${workout['reps']}',
-                          style: TextStyle(
-                            color: subTextColor,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Weight: ${workout['weight']} | Reps: ${workout['reps']}',
+                        style: TextStyle(
+                          color: neoSecondaryTextColor(context),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           );
         },

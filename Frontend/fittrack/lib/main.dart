@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'app_theme.dart';
+import 'neo_widgets.dart';
 import 'history_page.dart';
 import 'progress_page.dart';
 import 'workout_page.dart';
@@ -63,95 +64,31 @@ class _HomeScreenState extends State<HomeScreen> {
     ProgressPage(),
   ];
 
-  Widget buildRaisedNavItem({
-    required BuildContext context,
+  Widget buildNavItem({
+    required int index,
     required IconData icon,
     required String label,
   }) {
-    final isDark = neoIsDark(context);
-    final surface = neoSurfaceColor(context);
-    final accent = neoAccentColor(context);
-    final textColor = neoPrimaryTextColor(context);
+    final selected = selectedIndex == index;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-      decoration: BoxDecoration(
-        color: surface,
-        borderRadius: BorderRadius.circular(22),
-        boxShadow: [
-          BoxShadow(
-            color: isDark
-                ? Colors.white.withOpacity(0.06)
-                : Colors.white.withOpacity(0.95),
-            offset: const Offset(-6, -6),
-            blurRadius: 12,
-          ),
-          BoxShadow(
-            color: isDark
-                ? Colors.black.withOpacity(0.50)
-                : const Color(0xFFA7B7D6).withOpacity(0.75),
-            offset: const Offset(6, 6),
-            blurRadius: 12,
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: accent, size: 22),
-          const SizedBox(width: 8),
-          Text(
-            label,
-            style: TextStyle(
-              color: textColor,
-              fontWeight: FontWeight.w700,
-              fontSize: 13,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildUnselectedNavItem({
-    required BuildContext context,
-    required IconData icon,
-  }) {
-    final isDark = neoIsDark(context);
-    final surface = neoSurfaceColor(context);
-    final iconColor = isDark
-        ? const Color(0xFFAEBBD1)
-        : const Color(0xFF6B7C98);
-
-    return Container(
-      width: 58,
-      height: 58,
-      decoration: BoxDecoration(
-        color: surface,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: isDark
-                ? Colors.white.withOpacity(0.05)
-                : Colors.white.withOpacity(0.95),
-            offset: const Offset(-5, -5),
-            blurRadius: 10,
-          ),
-          BoxShadow(
-            color: isDark
-                ? Colors.black.withOpacity(0.45)
-                : const Color(0xFFA7B7D6).withOpacity(0.70),
-            offset: const Offset(5, 5),
-            blurRadius: 10,
-          ),
-        ],
-      ),
-      child: Center(
-        child: Icon(
-          icon,
-          color: iconColor,
-          size: 22,
-        ),
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedIndex = index;
+        });
+      },
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 180),
+        child: selected
+            ? NeoNavSelected(
+                key: ValueKey('selected_$index'),
+                icon: icon,
+                label: label,
+              )
+            : NeoNavUnselected(
+                key: ValueKey('unselected_$index'),
+                icon: icon,
+              ),
       ),
     );
   }
@@ -159,15 +96,21 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = neoIsDark(context);
-    final panelColor = neoSurfaceColor(context);
-    final titleColor = neoPrimaryTextColor(context);
+
+    final toggleBg = isDark
+        ? const Color(0xFF31415E)
+        : const Color(0xFFD4E2FF);
+
+    final toggleFg = isDark
+        ? const Color(0xFFEAF2FF)
+        : const Color(0xFF1F3F8F);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'FitTrack',
           style: TextStyle(
-            color: titleColor,
+            color: neoPrimaryTextColor(context),
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -179,16 +122,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 widget.onThemeChanged(!widget.isDarkMode);
               },
               style: ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll(
-                  isDark
-                      ? const Color(0xFF31415E)
-                      : const Color(0xFFD4E2FF),
-                ),
-                foregroundColor: WidgetStatePropertyAll(
-                  isDark
-                      ? const Color(0xFFEAF2FF)
-                      : const Color(0xFF1F3F8F),
-                ),
+                backgroundColor: WidgetStatePropertyAll(toggleBg),
+                foregroundColor: WidgetStatePropertyAll(toggleFg),
                 overlayColor: const WidgetStatePropertyAll(Colors.transparent),
                 shadowColor: const WidgetStatePropertyAll(Colors.transparent),
                 surfaceTintColor:
@@ -207,70 +142,28 @@ class _HomeScreenState extends State<HomeScreen> {
       body: pages[selectedIndex],
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.fromLTRB(18, 0, 18, 18),
-        child: Container(
+        child: NeoSurface(
           height: 92,
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-          decoration: BoxDecoration(
-            color: panelColor,
-            borderRadius: BorderRadius.circular(30),
-            boxShadow: [
-              BoxShadow(
-                color: isDark
-                    ? Colors.white.withOpacity(0.04)
-                    : Colors.white.withOpacity(0.96),
-                offset: const Offset(-12, -12),
-                blurRadius: 22,
-              ),
-              BoxShadow(
-                color: isDark
-                    ? Colors.black.withOpacity(0.58)
-                    : const Color(0xFFA7B7D6).withOpacity(0.85),
-                offset: const Offset(12, 12),
-                blurRadius: 22,
-              ),
-            ],
-          ),
+          radius: 30,
+          shadows: neoShadows(context, distance: 10, blur: 22),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              GestureDetector(
-                onTap: () => setState(() => selectedIndex = 0),
-                child: selectedIndex == 0
-                    ? buildRaisedNavItem(
-                        context: context,
-                        icon: Icons.fitness_center,
-                        label: 'Workout',
-                      )
-                    : buildUnselectedNavItem(
-                        context: context,
-                        icon: Icons.fitness_center,
-                      ),
+              buildNavItem(
+                index: 0,
+                icon: Icons.fitness_center,
+                label: 'Workout',
               ),
-              GestureDetector(
-                onTap: () => setState(() => selectedIndex = 1),
-                child: selectedIndex == 1
-                    ? buildRaisedNavItem(
-                        context: context,
-                        icon: Icons.history,
-                        label: 'History',
-                      )
-                    : buildUnselectedNavItem(
-                        context: context,
-                        icon: Icons.history,
-                      ),
+              buildNavItem(
+                index: 1,
+                icon: Icons.history,
+                label: 'History',
               ),
-              GestureDetector(
-                onTap: () => setState(() => selectedIndex = 2),
-                child: selectedIndex == 2
-                    ? buildRaisedNavItem(
-                        context: context,
-                        icon: Icons.show_chart,
-                        label: 'Progress',
-                      )
-                    : buildUnselectedNavItem(
-                        context: context,
-                        icon: Icons.show_chart,
-                      ),
+              buildNavItem(
+                index: 2,
+                icon: Icons.show_chart,
+                label: 'Progress',
               ),
             ],
           ),

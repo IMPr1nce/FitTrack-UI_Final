@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'app_theme.dart';
+import 'neo_widgets.dart';
 
 class ProgressPage extends StatefulWidget {
   const ProgressPage({super.key});
@@ -123,33 +124,12 @@ class _ProgressPageState extends State<ProgressPage> {
     String value,
     IconData icon,
   ) {
-    final textColor = neoPrimaryTextColor(context);
-    final accentColor = neoAccentColor(context);
-    final cardColor = neoSurfaceColor(context);
-
-    return Container(
+    return NeoSurface(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: cardColor,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: neoShadows(context),
-      ),
       child: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: cardColor,
-              shape: BoxShape.circle,
-              boxShadow: neoShadows(context, distance: 5, blur: 10),
-            ),
-            child: Icon(
-              icon,
-              size: 24,
-              color: accentColor,
-            ),
-          ),
+          NeoIconTile(icon: icon),
           const SizedBox(width: 16),
           Expanded(
             child: Text(
@@ -157,7 +137,7 @@ class _ProgressPageState extends State<ProgressPage> {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: textColor,
+                color: neoPrimaryTextColor(context),
               ),
             ),
           ),
@@ -166,7 +146,7 @@ class _ProgressPageState extends State<ProgressPage> {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: accentColor,
+              color: neoAccentColor(context),
             ),
           ),
         ],
@@ -175,33 +155,12 @@ class _ProgressPageState extends State<ProgressPage> {
   }
 
   Widget buildPRCard(BuildContext context, String exercise, double weight) {
-    final textColor = neoPrimaryTextColor(context);
-    final accentColor = neoAccentColor(context);
-    final cardColor = neoSurfaceColor(context);
-
-    return Container(
+    return NeoSurface(
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: cardColor,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: neoShadows(context),
-      ),
       child: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: cardColor,
-              shape: BoxShape.circle,
-              boxShadow: neoShadows(context, distance: 5, blur: 10),
-            ),
-            child: Icon(
-              Icons.emoji_events,
-              color: accentColor,
-              size: 24,
-            ),
-          ),
+          const NeoIconTile(icon: Icons.emoji_events),
           const SizedBox(width: 16),
           Expanded(
             child: Text(
@@ -209,7 +168,7 @@ class _ProgressPageState extends State<ProgressPage> {
               style: TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.w600,
-                color: textColor,
+                color: neoPrimaryTextColor(context),
               ),
             ),
           ),
@@ -218,7 +177,7 @@ class _ProgressPageState extends State<ProgressPage> {
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 16,
-              color: accentColor,
+              color: neoAccentColor(context),
             ),
           ),
         ],
@@ -228,15 +187,11 @@ class _ProgressPageState extends State<ProgressPage> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final textColor = neoPrimaryTextColor(context);
-    final subTextColor = neoSecondaryTextColor(context);
-    final accentColor = neoAccentColor(context);
-    final cardColor = neoSurfaceColor(context);
-
     if (loading) {
       return Center(
-        child: CircularProgressIndicator(color: accentColor),
+        child: CircularProgressIndicator(
+          color: neoAccentColor(context),
+        ),
       );
     }
 
@@ -244,18 +199,13 @@ class _ProgressPageState extends State<ProgressPage> {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(20),
-          child: Container(
+          child: NeoSurface(
             padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: cardColor,
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: neoShadows(context),
-            ),
             child: Text(
               error,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: scheme.error,
+                color: Theme.of(context).colorScheme.error,
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
@@ -266,9 +216,10 @@ class _ProgressPageState extends State<ProgressPage> {
     }
 
     return RefreshIndicator(
-      color: accentColor,
+      color: neoAccentColor(context),
       onRefresh: fetchProgressData,
       child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(16),
         children: [
           buildStatCard(
@@ -291,25 +242,20 @@ class _ProgressPageState extends State<ProgressPage> {
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: textColor,
+                color: neoPrimaryTextColor(context),
               ),
             ),
           ),
           const SizedBox(height: 14),
           if (personalRecords.isEmpty)
-            Container(
+            NeoSurface(
               padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(
-                color: cardColor,
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: neoShadows(context),
-              ),
               child: Text(
                 'No PR data yet',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
-                  color: subTextColor,
+                  color: neoSecondaryTextColor(context),
                 ),
               ),
             )

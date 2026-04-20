@@ -1,82 +1,49 @@
 import 'package:flutter/material.dart';
 
-ThemeData getTheme(Brightness newBrightness, Color newSeedColor) {
+ThemeData getTheme(Brightness brightness, Color seedColor) {
+  final isDark = brightness == Brightness.dark;
+
   final scheme = ColorScheme.fromSeed(
-    seedColor: newSeedColor,
-    brightness: newBrightness,
+    seedColor: seedColor,
+    brightness: brightness,
+  ).copyWith(
+    primary: isDark
+        ? const Color(0xFF8FB4FF)
+        : const Color(0xFF4D7CFE),
+    onPrimary: Colors.white,
+    surface: isDark
+        ? const Color(0xFF1E2530)
+        : const Color(0xFFD9E3F0),
+    onSurface: isDark
+        ? const Color(0xFFEAF2FF)
+        : const Color(0xFF24324A),
+    onSurfaceVariant: isDark
+        ? const Color(0xFFA9B6CC)
+        : const Color(0xFF5F6F8C),
+    primaryContainer: isDark
+        ? const Color(0xFF31415E)
+        : const Color(0xFFD4E2FF),
+    onPrimaryContainer: isDark
+        ? const Color(0xFFEAF2FF)
+        : const Color(0xFF1F3F8F),
   );
-
-  final isDark = newBrightness == Brightness.dark;
-
-  final background = isDark
-      ? const Color(0xFF1E2530)
-      : const Color(0xFFD9E3F0);
-
-  final surface = isDark
-      ? const Color(0xFF262E3B)
-      : const Color(0xFFEAF1FB);
-
-  final primaryText = isDark
-      ? const Color(0xFFEAF2FF)
-      : const Color(0xFF24324A);
 
   return ThemeData(
     useMaterial3: true,
-    colorScheme: scheme.copyWith(
-      primary: isDark
-          ? const Color(0xFF8FB4FF)
-          : const Color(0xFF4D7CFE),
-      onPrimary: Colors.white,
-      surface: background,
-      onSurface: primaryText,
-      onSurfaceVariant: isDark
-          ? const Color(0xFFA9B6CC)
-          : const Color(0xFF5F6F8C),
-      primaryContainer: isDark
-          ? const Color(0xFF31415E)
-          : const Color(0xFFD4E2FF),
-      onPrimaryContainer: isDark
-          ? const Color(0xFFEAF2FF)
-          : const Color(0xFF1F3F8F),
-    ),
-    scaffoldBackgroundColor: background,
+    colorScheme: scheme,
+    scaffoldBackgroundColor: neoBackgroundFromBrightness(brightness),
     appBarTheme: AppBarTheme(
-      backgroundColor: background,
-      foregroundColor: primaryText,
+      backgroundColor: neoBackgroundFromBrightness(brightness),
+      foregroundColor: scheme.onSurface,
       centerTitle: true,
       elevation: 0,
       surfaceTintColor: Colors.transparent,
       titleTextStyle: TextStyle(
         fontSize: 24,
         fontWeight: FontWeight.bold,
-        color: primaryText,
+        color: scheme.onSurface,
       ),
-      iconTheme: IconThemeData(color: primaryText),
-    ),
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: isDark
-            ? const Color(0xFF8FB4FF)
-            : const Color(0xFF4D7CFE),
-        foregroundColor: Colors.white,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        textStyle: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
-    ),
-    cardTheme: CardThemeData(
-      elevation: 0,
-      color: surface,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      margin: const EdgeInsets.all(16),
+      iconTheme: IconThemeData(color: scheme.onSurface),
     ),
   );
 }
@@ -85,16 +52,24 @@ bool neoIsDark(BuildContext context) {
   return Theme.of(context).brightness == Brightness.dark;
 }
 
-Color neoBackgroundColor(BuildContext context) {
-  return neoIsDark(context)
+Color neoBackgroundFromBrightness(Brightness brightness) {
+  return brightness == Brightness.dark
       ? const Color(0xFF1E2530)
       : const Color(0xFFD9E3F0);
 }
 
-Color neoSurfaceColor(BuildContext context) {
-  return neoIsDark(context)
+Color neoSurfaceFromBrightness(Brightness brightness) {
+  return brightness == Brightness.dark
       ? const Color(0xFF262E3B)
       : const Color(0xFFEAF1FB);
+}
+
+Color neoBackgroundColor(BuildContext context) {
+  return neoBackgroundFromBrightness(Theme.of(context).brightness);
+}
+
+Color neoSurfaceColor(BuildContext context) {
+  return neoSurfaceFromBrightness(Theme.of(context).brightness);
 }
 
 Color neoPrimaryTextColor(BuildContext context) {
@@ -125,12 +100,12 @@ List<BoxShadow> neoShadows(
   if (isDark) {
     return [
       BoxShadow(
-        color: Colors.white.withOpacity(0.08),
+        color: Colors.white.withOpacity(0.06),
         offset: Offset(-distance, -distance),
         blurRadius: blur,
       ),
       BoxShadow(
-        color: Colors.black.withOpacity(0.55),
+        color: Colors.black.withOpacity(0.52),
         offset: Offset(distance, distance),
         blurRadius: blur,
       ),
@@ -139,12 +114,12 @@ List<BoxShadow> neoShadows(
 
   return [
     BoxShadow(
-      color: Colors.white.withOpacity(0.95),
+      color: Colors.white.withOpacity(0.96),
       offset: Offset(-distance, -distance),
       blurRadius: blur,
     ),
     BoxShadow(
-      color: const Color(0xFFA7B7D6).withOpacity(0.75),
+      color: const Color(0xFFA7B7D6).withOpacity(0.78),
       offset: Offset(distance, distance),
       blurRadius: blur,
     ),
