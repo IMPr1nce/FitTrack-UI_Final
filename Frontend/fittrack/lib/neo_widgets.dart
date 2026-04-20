@@ -380,3 +380,265 @@ class _NeoPrimaryButtonState extends State<NeoPrimaryButton> {
     );
   }
 }
+class NeoAchievementCard extends StatelessWidget {
+  final String title;
+  final String value;
+  final IconData icon;
+  final double shineLevel;
+  final EdgeInsetsGeometry margin;
+
+  const NeoAchievementCard({
+    super.key,
+    required this.title,
+    required this.value,
+    required this.icon,
+    required this.shineLevel,
+    this.margin = EdgeInsets.zero,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = neoIsDark(context);
+    final level = shineLevel.clamp(0.0, 1.0).toDouble();
+
+    final baseSurface = neoSurfaceColor(context);
+    final baseAccent = neoAccentColor(context);
+    final baseTitle = neoPrimaryTextColor(context);
+    final baseSubtitle = neoSecondaryTextColor(context);
+
+    final targetSurface = isDark
+        ? const Color(0xFF6289D6)
+        : const Color(0xFF4F6FAF);
+
+    final targetAccent = isDark
+        ? const Color(0xFFF5F9FF)
+        : const Color(0xFFF4F8FF);
+
+    final surfaceBlend = 0.58;
+    final accentBlend = 0.55;
+
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: level),
+      duration: const Duration(milliseconds: 450),
+      curve: Curves.easeOut,
+      builder: (context, t, _) {
+        final surface = Color.lerp(
+          baseSurface,
+          targetSurface,
+          t * surfaceBlend,
+        )!;
+
+        final accent = Color.lerp(
+          baseAccent,
+          targetAccent,
+          t * accentBlend,
+        )!;
+
+        final titleColor = Color.lerp(
+          baseTitle,
+          const Color(0xFFF7FAFF),
+          t * 0.82,
+        )!;
+
+        final subtitleColor = Color.lerp(
+          baseSubtitle,
+          const Color(0xFFE4ECFF),
+          t * 0.78,
+        )!;
+
+        final outerGlow = isDark
+            ? accent.withOpacity(0.10 * t)
+            : const Color(0xFF6F93DB).withOpacity(0.16 * t);
+
+        final iconGlow = isDark
+            ? accent.withOpacity(0.10 + (0.10 * t))
+            : const Color(0xFF9EB8F2).withOpacity(0.10 + (0.10 * t));
+
+        final topSheen = isDark
+            ? Colors.white.withOpacity(0.03 + (0.05 * t))
+            : Colors.white.withOpacity(0.10 + (0.12 * t));
+
+        final bottomTint = isDark
+            ? accent.withOpacity(0.05 + (0.08 * t))
+            : const Color(0xFF385A9D).withOpacity(0.04 + (0.10 * t));
+
+        final localShadows = isDark
+            ? [
+                BoxShadow(
+                  color: Colors.white.withOpacity(0.05 + (0.02 * t)),
+                  offset: const Offset(-10, -10),
+                  blurRadius: 22 + (t * 4),
+                ),
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.54 + (0.08 * t)),
+                  offset: const Offset(10, 10),
+                  blurRadius: 22 + (t * 4),
+                ),
+                BoxShadow(
+                  color: outerGlow,
+                  blurRadius: 16 + (t * 18),
+                  spreadRadius: t * 0.6,
+                ),
+              ]
+            : [
+                BoxShadow(
+                  color: Colors.white.withOpacity(0.86 + (0.06 * t)),
+                  offset: const Offset(-10, -10),
+                  blurRadius: 22 + (t * 4),
+                ),
+                BoxShadow(
+                  color: const Color(0xFF8FA5CC).withOpacity(0.82 + (0.08 * t)),
+                  offset: const Offset(10, 10),
+                  blurRadius: 22 + (t * 4),
+                ),
+                BoxShadow(
+                  color: outerGlow,
+                  blurRadius: 16 + (t * 18),
+                  spreadRadius: t * 0.7,
+                ),
+              ];
+
+        return Container(
+          margin: margin,
+          decoration: BoxDecoration(
+            color: surface,
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: localShadows,
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(24),
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          topSheen,
+                          Colors.transparent,
+                          bottomTint,
+                        ],
+                        stops: const [0.0, 0.42, 1.0],
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  left: -30,
+                  top: -22,
+                  child: IgnorePointer(
+                    child: Container(
+                      width: 170,
+                      height: 74,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Colors.white.withOpacity(
+                              isDark
+                                  ? 0.02 + (0.04 * t)
+                                  : 0.08 + (0.14 * t),
+                            ),
+                            Colors.transparent,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(18),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: surface,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            if (isDark) ...[
+                              BoxShadow(
+                                color: Colors.white.withOpacity(0.04 + (0.02 * t)),
+                                offset: const Offset(-6, -6),
+                                blurRadius: 12 + (t * 3),
+                              ),
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.44 + (0.08 * t)),
+                                offset: const Offset(6, 6),
+                                blurRadius: 12 + (t * 3),
+                              ),
+                            ] else ...[
+                              BoxShadow(
+                                color: Colors.white.withOpacity(0.88 + (0.08 * t)),
+                                offset: const Offset(-6, -6),
+                                blurRadius: 12 + (t * 3),
+                              ),
+                              BoxShadow(
+                                color: const Color(0xFF8FA5CC).withOpacity(0.74 + (0.08 * t)),
+                                offset: const Offset(6, 6),
+                                blurRadius: 12 + (t * 3),
+                              ),
+                            ],
+                            BoxShadow(
+                              color: iconGlow,
+                              blurRadius: 8 + (t * 12),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          icon,
+                          size: 24,
+                          color: accent,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              title,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: titleColor,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              t < 0.33
+                                  ? 'Building momentum'
+                                  : t < 0.66
+                                      ? 'Strong progress'
+                                      : 'Elite volume',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: subtitleColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Text(
+                        value,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                          color: accent,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}

@@ -73,23 +73,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return GestureDetector(
       onTap: () {
-        setState(() {
-          selectedIndex = index;
-        });
+        if (selectedIndex != index) {
+          setState(() {
+            selectedIndex = index;
+          });
+        }
       },
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 180),
-        child: selected
-            ? NeoNavSelected(
-                key: ValueKey('selected_$index'),
-                icon: icon,
-                label: label,
-              )
-            : NeoNavUnselected(
-                key: ValueKey('unselected_$index'),
-                icon: icon,
-              ),
-      ),
+      child: selected
+          ? NeoNavSelected(
+              icon: icon,
+              label: label,
+            )
+          : NeoNavUnselected(
+              icon: icon,
+            ),
     );
   }
 
@@ -139,7 +136,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: pages[selectedIndex],
+      body: IndexedStack(
+        index: selectedIndex,
+        children: pages,
+      ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.fromLTRB(18, 0, 18, 18),
         child: NeoSurface(

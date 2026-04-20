@@ -58,6 +58,13 @@ class _ProgressPageState extends State<ProgressPage> {
         .join(' ');
   }
 
+  double get weightShineLevel {
+    if (totalWeightLifted <= 0) return 0.0;
+
+    const cap = 20000.0;
+    return (totalWeightLifted / cap).clamp(0.0, 1.0).toDouble();
+  }
+
   Future<void> fetchProgressData() async {
     try {
       final client = HttpClient();
@@ -228,11 +235,12 @@ class _ProgressPageState extends State<ProgressPage> {
             workoutsThisWeek.toString(),
             Icons.calendar_today,
           ),
-          buildStatCard(
-            context,
-            'Total Weight Lifted',
-            totalWeightLifted.toStringAsFixed(0),
-            Icons.fitness_center,
+          NeoAchievementCard(
+            title: 'Total Weight Lifted',
+            value: '${totalWeightLifted.toStringAsFixed(0)} lbs',
+            icon: Icons.fitness_center,
+            shineLevel: weightShineLevel,
+            margin: const EdgeInsets.only(bottom: 16),
           ),
           const SizedBox(height: 8),
           Padding(
