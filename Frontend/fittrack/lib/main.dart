@@ -57,12 +57,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int selectedIndex = 0;
-
-  final List<Widget> pages = const [
-    WorkoutPage(),
-    HistoryPage(),
-    ProgressPage(),
-  ];
+  int refreshTick = 0;
 
   Widget buildNavItem({
     required int index,
@@ -138,7 +133,17 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: IndexedStack(
         index: selectedIndex,
-        children: pages,
+        children: [
+          WorkoutPage(
+            onWorkoutSaved: () {
+              setState(() {
+                refreshTick++;
+              });
+            },
+          ),
+          HistoryPage(refreshTick: refreshTick),
+          ProgressPage(refreshTick: refreshTick),
+        ],
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.fromLTRB(18, 0, 18, 18),

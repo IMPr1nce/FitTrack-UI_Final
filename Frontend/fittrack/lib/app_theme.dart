@@ -100,12 +100,12 @@ List<BoxShadow> neoShadows(
   if (isDark) {
     return [
       BoxShadow(
-        color: Colors.white.withOpacity(0.08),
+        color: Colors.white.withValues(alpha: 0.08),
         offset: Offset(-distance, -distance),
         blurRadius: blur,
       ),
       BoxShadow(
-        color: Colors.black.withOpacity(0.62),
+        color: Colors.black.withValues(alpha: 0.62),
         offset: Offset(distance, distance),
         blurRadius: blur,
       ),
@@ -114,12 +114,12 @@ List<BoxShadow> neoShadows(
 
   return [
     BoxShadow(
-      color: const Color(0xFFF6FAFF).withOpacity(0.82),
+      color: const Color(0xFFF6FAFF).withValues(alpha: 0.82),
       offset: Offset(-distance, -distance),
       blurRadius: blur,
     ),
     BoxShadow(
-      color: const Color(0xFF9AAECC).withOpacity(0.95),
+      color: const Color(0xFF9AAECC).withValues(alpha: 0.95),
       offset: Offset(distance, distance),
       blurRadius: blur,
     ),
@@ -136,12 +136,12 @@ List<BoxShadow> neoSoftShadows(
   if (isDark) {
     return [
       BoxShadow(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         offset: Offset(-distance, -distance),
         blurRadius: blur,
       ),
       BoxShadow(
-        color: Colors.black.withOpacity(0.48),
+        color: Colors.black.withValues(alpha: 0.48),
         offset: Offset(distance, distance),
         blurRadius: blur,
       ),
@@ -150,12 +150,12 @@ List<BoxShadow> neoSoftShadows(
 
   return [
     BoxShadow(
-      color: const Color(0xFFF7FBFF).withOpacity(0.76),
+      color: const Color(0xFFF7FBFF).withValues(alpha: 0.76),
       offset: Offset(-distance, -distance),
       blurRadius: blur,
     ),
     BoxShadow(
-      color: const Color(0xFF9FB2CF).withOpacity(0.82),
+      color: const Color(0xFF9FB2CF).withValues(alpha: 0.82),
       offset: Offset(distance, distance),
       blurRadius: blur,
     ),
@@ -171,13 +171,13 @@ List<BoxShadow> neoInsetShadows(
   if (isDark) {
     return [
       BoxShadow(
-        color: Colors.black.withOpacity(0.52),
+        color: Colors.black.withValues(alpha: 0.52),
         offset: Offset(distance, distance),
         blurRadius: blur,
         blurStyle: BlurStyle.inner,
       ),
       BoxShadow(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         offset: Offset(-distance, -distance),
         blurRadius: blur,
         blurStyle: BlurStyle.inner,
@@ -187,13 +187,13 @@ List<BoxShadow> neoInsetShadows(
 
   return [
     BoxShadow(
-      color: const Color(0xFF97A9C7).withOpacity(0.88),
+      color: const Color(0xFF97A9C7).withValues(alpha: 0.88),
       offset: Offset(distance, distance),
       blurRadius: blur,
       blurStyle: BlurStyle.inner,
     ),
     BoxShadow(
-      color: const Color(0xFFF8FBFF).withOpacity(0.72),
+      color: const Color(0xFFF8FBFF).withValues(alpha: 0.72),
       offset: Offset(-distance, -distance),
       blurRadius: blur,
       blurStyle: BlurStyle.inner,

@@ -5,7 +5,12 @@ import 'app_theme.dart';
 import 'neo_widgets.dart';
 
 class WorkoutPage extends StatefulWidget {
-  const WorkoutPage({super.key});
+  final VoidCallback? onWorkoutSaved;
+
+  const WorkoutPage({
+    super.key,
+    this.onWorkoutSaved,
+  });
 
   @override
   State<WorkoutPage> createState() => _WorkoutPageState();
@@ -80,6 +85,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
           weightController.clear();
           repsController.clear();
         });
+
+        widget.onWorkoutSaved?.call();
       } else {
         setState(() {
           message = 'Failed: $responseBody';
@@ -103,6 +110,9 @@ class _WorkoutPageState extends State<WorkoutPage> {
   @override
   Widget build(BuildContext context) {
     final isSuccess = message.toLowerCase().contains('success');
+    final logWorkoutCardColor = neoIsDark(context)
+        ? const Color(0xFF1B2A3B)
+        : const Color.fromARGB(255, 208, 228, 255);
 
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -111,6 +121,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
           NeoSurface(
             padding: const EdgeInsets.all(22),
             radius: 28,
+            color: logWorkoutCardColor,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

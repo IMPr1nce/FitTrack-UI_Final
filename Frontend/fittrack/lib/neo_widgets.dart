@@ -92,11 +92,7 @@ class NeoNavSelected extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            color: neoAccentColor(context),
-            size: 22,
-          ),
+          Icon(icon, color: neoAccentColor(context), size: 22),
           const SizedBox(width: 8),
           Text(
             label,
@@ -167,10 +163,7 @@ class NeoTextField extends StatelessWidget {
           fontWeight: FontWeight.w600,
         ),
         decoration: InputDecoration(
-          prefixIcon: Icon(
-            icon,
-            color: neoAccentColor(context),
-          ),
+          prefixIcon: Icon(icon, color: neoAccentColor(context)),
           labelText: label,
           labelStyle: TextStyle(
             color: neoSecondaryTextColor(context),
@@ -201,72 +194,61 @@ class _NeoInnerShadowPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final rect = Offset.zero & size;
-    final rrect = RRect.fromRectAndRadius(
+    final path = Path()
+      ..addRRect(
+        RRect.fromRectAndRadius(rect, Radius.circular(radius)),
+      );
+
+    _drawInnerShadow(
+      canvas,
       rect,
-      Radius.circular(radius),
-    );
-    final innerPath = Path()..addRRect(rrect);
-
-    _drawInnerShadow(
-      canvas: canvas,
-      rect: rect,
-      clipPath: innerPath,
-      radius: radius,
-      color: isDark
-          ? Colors.white.withOpacity(0.05)
-          : const Color(0xFFF8FBFF).withOpacity(0.95),
-      offset: const Offset(4, 4),
-      blurSigma: 8,
+      path,
+      const Offset(4, 4),
+      isDark
+          ? Colors.white.withValues(alpha: 0.05)
+          : const Color(0xFFF8FBFF).withValues(alpha: 0.95),
     );
 
     _drawInnerShadow(
-      canvas: canvas,
-      rect: rect,
-      clipPath: innerPath,
-      radius: radius,
-      color: isDark
-          ? Colors.black.withOpacity(0.28)
-          : const Color(0xFF97A9C7).withOpacity(0.62),
-      offset: const Offset(-4, -4),
-      blurSigma: 8,
+      canvas,
+      rect,
+      path,
+      const Offset(-4, -4),
+      isDark
+          ? Colors.black.withValues(alpha: 0.28)
+          : const Color(0xFF97A9C7).withValues(alpha: 0.62),
     );
 
-    final edgePaint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.9
-      ..color = isDark
-          ? Colors.white.withOpacity(0.03)
-          : Colors.white.withOpacity(0.22);
-
-    canvas.drawRRect(rrect, edgePaint);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(rect, Radius.circular(radius)),
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.9
+        ..color = isDark
+            ? Colors.white.withValues(alpha: 0.03)
+            : Colors.white.withValues(alpha: 0.22),
+    );
   }
 
-  void _drawInnerShadow({
-    required Canvas canvas,
-    required Rect rect,
-    required Path clipPath,
-    required double radius,
-    required Color color,
-    required Offset offset,
-    required double blurSigma,
-  }) {
-    final outerRect = rect.inflate(blurSigma * 3);
-
-    final outerPath = Path()..addRect(outerRect);
-    final shadowPath = Path.combine(
-      PathOperation.difference,
-      outerPath,
-      clipPath,
-    );
-
-    final paint = Paint()
-      ..color = color
-      ..maskFilter = MaskFilter.blur(BlurStyle.normal, blurSigma);
+  void _drawInnerShadow(
+    Canvas canvas,
+    Rect rect,
+    Path clipPath,
+    Offset offset,
+    Color color,
+  ) {
+    final outer = Path()..addRect(rect.inflate(30));
+    final shadow = Path.combine(PathOperation.difference, outer, clipPath);
 
     canvas.save();
     canvas.clipPath(clipPath);
     canvas.translate(offset.dx, offset.dy);
-    canvas.drawPath(shadowPath, paint);
+    canvas.drawPath(
+      shadow,
+      Paint()
+        ..color = color
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
+    );
     canvas.restore();
   }
 
@@ -293,12 +275,12 @@ class NeoPrimaryButton extends StatefulWidget {
 }
 
 class _NeoPrimaryButtonState extends State<NeoPrimaryButton> {
-  bool _pressed = false;
+  bool pressed = false;
 
-  void _setPressed(bool value) {
-    if (_pressed == value) return;
+  void setPressed(bool value) {
+    if (pressed == value) return;
     setState(() {
-      _pressed = value;
+      pressed = value;
     });
   }
 
@@ -306,36 +288,25 @@ class _NeoPrimaryButtonState extends State<NeoPrimaryButton> {
   Widget build(BuildContext context) {
     final isDark = neoIsDark(context);
 
-    final buttonColor = isDark
-        ? const Color(0xFF314563)
-        : const Color(0xFFD7E4F8);
-
-    final textColor = isDark
-        ? const Color(0xFFEAF2FF)
-        : const Color(0xFF1E408F);
-
-    const radiusValue = 22.0;
-    final radius = BorderRadius.circular(radiusValue);
-
     return Container(
       decoration: BoxDecoration(
-        color: buttonColor,
-        borderRadius: radius,
-        boxShadow: _pressed
-            ? const []
-            : neoShadows(context, distance: 10, blur: 22),
+        color: isDark
+            ? const Color(0xFF314563)
+            : const Color(0xFFD7E4F8),
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: pressed ? [] : neoShadows(context, distance: 10, blur: 22),
       ),
       child: ClipRRect(
-        borderRadius: radius,
+        borderRadius: BorderRadius.circular(22),
         child: Stack(
           children: [
-            if (_pressed)
+            if (pressed)
               Positioned.fill(
                 child: IgnorePointer(
                   child: CustomPaint(
                     painter: _NeoInnerShadowPainter(
                       isDark: isDark,
-                      radius: radiusValue,
+                      radius: 22,
                     ),
                   ),
                 ),
@@ -343,13 +314,13 @@ class _NeoPrimaryButtonState extends State<NeoPrimaryButton> {
             Material(
               color: Colors.transparent,
               child: InkWell(
-                borderRadius: radius,
+                borderRadius: BorderRadius.circular(22),
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
-                onTapDown: (_) => _setPressed(true),
-                onTapCancel: () => _setPressed(false),
+                onTapDown: (_) => setPressed(true),
+                onTapCancel: () => setPressed(false),
                 onTapUp: (_) {
-                  _setPressed(false);
+                  setPressed(false);
                   widget.onPressed();
                 },
                 child: Padding(
@@ -358,13 +329,21 @@ class _NeoPrimaryButtonState extends State<NeoPrimaryButton> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       if (widget.icon != null) ...[
-                        Icon(widget.icon, color: textColor, size: 20),
+                        Icon(
+                          widget.icon,
+                          size: 20,
+                          color: isDark
+                              ? const Color(0xFFEAF2FF)
+                              : const Color(0xFF1E408F),
+                        ),
                         const SizedBox(width: 8),
                       ],
                       Text(
                         widget.text,
                         style: TextStyle(
-                          color: textColor,
+                          color: isDark
+                              ? const Color(0xFFEAF2FF)
+                              : const Color(0xFF1E408F),
                           fontSize: 16,
                           fontWeight: FontWeight.w800,
                         ),
@@ -380,6 +359,7 @@ class _NeoPrimaryButtonState extends State<NeoPrimaryButton> {
     );
   }
 }
+
 class NeoAchievementCard extends StatelessWidget {
   final String title;
   final String value;
@@ -398,112 +378,78 @@ class NeoAchievementCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = shineLevel.clamp(0.0, 1.0);
     final isDark = neoIsDark(context);
-    final level = shineLevel.clamp(0.0, 1.0).toDouble();
 
-    final baseSurface = neoSurfaceColor(context);
-    final baseAccent = neoAccentColor(context);
-    final baseTitle = neoPrimaryTextColor(context);
-    final baseSubtitle = neoSecondaryTextColor(context);
+    final surface = Color.lerp(
+      neoSurfaceColor(context),
+      isDark
+          ? const Color(0xFF6289D6)
+          : const Color(0xFF4F6FAF),
+      t * 0.58,
+    )!;
 
-    final targetSurface = isDark
-        ? const Color(0xFF6289D6)
-        : const Color(0xFF4F6FAF);
+    final accent = Color.lerp(
+      neoAccentColor(context),
+      const Color(0xFFF5F9FF),
+      t * 0.55,
+    )!;
 
-    final targetAccent = isDark
-        ? const Color(0xFFF5F9FF)
-        : const Color(0xFFF4F8FF);
+    final titleColor = Color.lerp(
+      neoPrimaryTextColor(context),
+      const Color(0xFFF7FAFF),
+      t * 0.82,
+    )!;
 
-    final surfaceBlend = 0.58;
-    final accentBlend = 0.55;
+    final subtitleColor = Color.lerp(
+      neoSecondaryTextColor(context),
+      const Color(0xFFE4ECFF),
+      t * 0.78,
+    )!;
 
     return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0, end: level),
+      tween: Tween(begin: 0, end: t.toDouble()),
       duration: const Duration(milliseconds: 450),
       curve: Curves.easeOut,
-      builder: (context, t, _) {
-        final surface = Color.lerp(
-          baseSurface,
-          targetSurface,
-          t * surfaceBlend,
-        )!;
-
-        final accent = Color.lerp(
-          baseAccent,
-          targetAccent,
-          t * accentBlend,
-        )!;
-
-        final titleColor = Color.lerp(
-          baseTitle,
-          const Color(0xFFF7FAFF),
-          t * 0.82,
-        )!;
-
-        final subtitleColor = Color.lerp(
-          baseSubtitle,
-          const Color(0xFFE4ECFF),
-          t * 0.78,
-        )!;
-
-        final outerGlow = isDark
-            ? accent.withOpacity(0.10 * t)
-            : const Color(0xFF6F93DB).withOpacity(0.16 * t);
-
-        final iconGlow = isDark
-            ? accent.withOpacity(0.10 + (0.10 * t))
-            : const Color(0xFF9EB8F2).withOpacity(0.10 + (0.10 * t));
-
-        final topSheen = isDark
-            ? Colors.white.withOpacity(0.03 + (0.05 * t))
-            : Colors.white.withOpacity(0.10 + (0.12 * t));
-
-        final bottomTint = isDark
-            ? accent.withOpacity(0.05 + (0.08 * t))
-            : const Color(0xFF385A9D).withOpacity(0.04 + (0.10 * t));
-
-        final localShadows = isDark
-            ? [
-                BoxShadow(
-                  color: Colors.white.withOpacity(0.05 + (0.02 * t)),
-                  offset: const Offset(-10, -10),
-                  blurRadius: 22 + (t * 4),
-                ),
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.54 + (0.08 * t)),
-                  offset: const Offset(10, 10),
-                  blurRadius: 22 + (t * 4),
-                ),
-                BoxShadow(
-                  color: outerGlow,
-                  blurRadius: 16 + (t * 18),
-                  spreadRadius: t * 0.6,
-                ),
-              ]
-            : [
-                BoxShadow(
-                  color: Colors.white.withOpacity(0.86 + (0.06 * t)),
-                  offset: const Offset(-10, -10),
-                  blurRadius: 22 + (t * 4),
-                ),
-                BoxShadow(
-                  color: const Color(0xFF8FA5CC).withOpacity(0.82 + (0.08 * t)),
-                  offset: const Offset(10, 10),
-                  blurRadius: 22 + (t * 4),
-                ),
-                BoxShadow(
-                  color: outerGlow,
-                  blurRadius: 16 + (t * 18),
-                  spreadRadius: t * 0.7,
-                ),
-              ];
-
+      builder: (context, level, _) {
         return Container(
           margin: margin,
           decoration: BoxDecoration(
             color: surface,
             borderRadius: BorderRadius.circular(24),
-            boxShadow: localShadows,
+            boxShadow: [
+              if (isDark) ...[
+                BoxShadow(
+                  color: Colors.white.withValues(alpha: 0.05 + (0.02 * level)),
+                  offset: const Offset(-10, -10),
+                  blurRadius: 22 + (level * 4),
+                ),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.54 + (0.08 * level)),
+                  offset: const Offset(10, 10),
+                  blurRadius: 22 + (level * 4),
+                ),
+              ] else ...[
+                BoxShadow(
+                  color: Colors.white.withValues(alpha: 0.86 + (0.06 * level)),
+                  offset: const Offset(-10, -10),
+                  blurRadius: 22 + (level * 4),
+                ),
+                BoxShadow(
+                  color: const Color(0xFF8FA5CC)
+                      .withValues(alpha: 0.82 + (0.08 * level)),
+                  offset: const Offset(10, 10),
+                  blurRadius: 22 + (level * 4),
+                ),
+              ],
+              BoxShadow(
+                color: isDark
+                    ? accent.withValues(alpha: 0.10 * level)
+                    : const Color(0xFF6F93DB).withValues(alpha: 0.16 * level),
+                blurRadius: 16 + (level * 18),
+                spreadRadius: level * 0.7,
+              ),
+            ],
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(24),
@@ -516,35 +462,16 @@ class NeoAchievementCard extends StatelessWidget {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          topSheen,
+                          isDark
+                              ? Colors.white.withValues(alpha: 0.03 + (0.05 * level))
+                              : Colors.white.withValues(alpha: 0.10 + (0.12 * level)),
                           Colors.transparent,
-                          bottomTint,
+                          isDark
+                              ? accent.withValues(alpha: 0.05 + (0.08 * level))
+                              : const Color(0xFF385A9D)
+                                  .withValues(alpha: 0.04 + (0.10 * level)),
                         ],
                         stops: const [0.0, 0.42, 1.0],
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  left: -30,
-                  top: -22,
-                  child: IgnorePointer(
-                    child: Container(
-                      width: 170,
-                      height: 74,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            Colors.white.withOpacity(
-                              isDark
-                                  ? 0.02 + (0.04 * t)
-                                  : 0.08 + (0.14 * t),
-                            ),
-                            Colors.transparent,
-                          ],
-                        ),
                       ),
                     ),
                   ),
@@ -559,40 +486,21 @@ class NeoAchievementCard extends StatelessWidget {
                           color: surface,
                           shape: BoxShape.circle,
                           boxShadow: [
-                            if (isDark) ...[
-                              BoxShadow(
-                                color: Colors.white.withOpacity(0.04 + (0.02 * t)),
-                                offset: const Offset(-6, -6),
-                                blurRadius: 12 + (t * 3),
-                              ),
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.44 + (0.08 * t)),
-                                offset: const Offset(6, 6),
-                                blurRadius: 12 + (t * 3),
-                              ),
-                            ] else ...[
-                              BoxShadow(
-                                color: Colors.white.withOpacity(0.88 + (0.08 * t)),
-                                offset: const Offset(-6, -6),
-                                blurRadius: 12 + (t * 3),
-                              ),
-                              BoxShadow(
-                                color: const Color(0xFF8FA5CC).withOpacity(0.74 + (0.08 * t)),
-                                offset: const Offset(6, 6),
-                                blurRadius: 12 + (t * 3),
-                              ),
-                            ],
+                            ...neoSoftShadows(
+                              context,
+                              distance: 6 + level,
+                              blur: 12 + (level * 3),
+                            ),
                             BoxShadow(
-                              color: iconGlow,
-                              blurRadius: 8 + (t * 12),
+                              color: isDark
+                                  ? accent.withValues(alpha: 0.10 + (0.10 * level))
+                                  : const Color(0xFF9EB8F2)
+                                      .withValues(alpha: 0.10 + (0.10 * level)),
+                              blurRadius: 8 + (level * 12),
                             ),
                           ],
                         ),
-                        child: Icon(
-                          icon,
-                          size: 24,
-                          color: accent,
-                        ),
+                        child: Icon(icon, size: 24, color: accent),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
@@ -609,9 +517,9 @@ class NeoAchievementCard extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              t < 0.33
+                              level < 0.33
                                   ? 'Building momentum'
-                                  : t < 0.66
+                                  : level < 0.66
                                       ? 'Strong progress'
                                       : 'Elite volume',
                               style: TextStyle(

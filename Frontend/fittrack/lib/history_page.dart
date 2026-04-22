@@ -5,7 +5,12 @@ import 'app_theme.dart';
 import 'neo_widgets.dart';
 
 class HistoryPage extends StatefulWidget {
-  const HistoryPage({super.key});
+  final int refreshTick;
+
+  const HistoryPage({
+    super.key,
+    required this.refreshTick,
+  });
 
   @override
   State<HistoryPage> createState() => _HistoryPageState();
@@ -55,6 +60,14 @@ class _HistoryPageState extends State<HistoryPage> {
   void initState() {
     super.initState();
     fetchWorkouts();
+  }
+
+  @override
+  void didUpdateWidget(covariant HistoryPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.refreshTick != widget.refreshTick) {
+      fetchWorkouts();
+    }
   }
 
   @override

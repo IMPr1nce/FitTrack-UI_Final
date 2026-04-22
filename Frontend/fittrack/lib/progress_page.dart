@@ -5,7 +5,12 @@ import 'app_theme.dart';
 import 'neo_widgets.dart';
 
 class ProgressPage extends StatefulWidget {
-  const ProgressPage({super.key});
+  final int refreshTick;
+
+  const ProgressPage({
+    super.key,
+    required this.refreshTick,
+  });
 
   @override
   State<ProgressPage> createState() => _ProgressPageState();
@@ -24,6 +29,14 @@ class _ProgressPageState extends State<ProgressPage> {
   void initState() {
     super.initState();
     fetchProgressData();
+  }
+
+  @override
+  void didUpdateWidget(covariant ProgressPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.refreshTick != widget.refreshTick) {
+      fetchProgressData();
+    }
   }
 
   String normalizeExercise(String input) {
@@ -60,7 +73,6 @@ class _ProgressPageState extends State<ProgressPage> {
 
   double get weightShineLevel {
     if (totalWeightLifted <= 0) return 0.0;
-
     const cap = 20000.0;
     return (totalWeightLifted / cap).clamp(0.0, 1.0).toDouble();
   }
