@@ -110,86 +110,91 @@ class _WorkoutPageState extends State<WorkoutPage> {
   @override
   Widget build(BuildContext context) {
     final isSuccess = message.toLowerCase().contains('success');
-    final logWorkoutCardColor = neoIsDark(context)
-        ? const Color(0xFF1B2A3B)
-        : const Color.fromARGB(255, 208, 228, 255);
+    final backgroundColor = neoBackgroundFromBrightness(Theme.of(context).brightness);
 
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: ListView(
-        children: [
-          NeoSurface(
-            padding: const EdgeInsets.all(22),
-            radius: 28,
-            color: logWorkoutCardColor,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Log Workout',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: neoPrimaryTextColor(context),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Track your exercise, weight, and reps',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: neoSecondaryTextColor(context),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 22),
-                NeoTextField(
-                  controller: exerciseController,
-                  label: 'Exercise',
-                  icon: Icons.fitness_center,
-                ),
-                const SizedBox(height: 16),
-                NeoTextField(
-                  controller: weightController,
-                  label: 'Weight',
-                  icon: Icons.monitor_weight_outlined,
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 16),
-                NeoTextField(
-                  controller: repsController,
-                  label: 'Reps',
-                  icon: Icons.repeat,
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 22),
-                NeoPrimaryButton(
-                  text: 'Save Workout',
-                  icon: Icons.save_rounded,
-                  onPressed: saveWorkout,
-                ),
-                if (message.isNotEmpty) ...[
-                  const SizedBox(height: 16),
-                  NeoSurface(
-                    padding: const EdgeInsets.all(14),
-                    radius: 18,
-                    shadows: neoShadows(context, distance: 5, blur: 10),
-                    child: Text(
-                      message,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: isSuccess
-                            ? Colors.green.shade700
-                            : Theme.of(context).colorScheme.error,
-                        fontWeight: FontWeight.w600,
-                      ),
+    return Container(
+      color: backgroundColor,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: ListView(
+          children: [
+            NeoSurface(
+              padding: const EdgeInsets.all(22),
+              radius: 28,
+              color: backgroundColor,
+              shadows: neoSoftShadows(context, distance: 4, blur: 14),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Log Workout',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: neoPrimaryTextColor(context),
                     ),
                   ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Track your exercise, weight, and reps',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: neoSecondaryTextColor(context),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 22),
+                  NeoTextField(
+                    controller: exerciseController,
+                    label: 'Exercise',
+                    icon: Icons.fitness_center,
+                  ),
+                  const SizedBox(height: 16),
+                  NeoTextField(
+                    controller: weightController,
+                    label: 'Weight',
+                    icon: Icons.monitor_weight_outlined,
+                    keyboardType: TextInputType.number,
+                  ),
+                  const SizedBox(height: 16),
+                  NeoTextField(
+                    controller: repsController,
+                    label: 'Reps',
+                    icon: Icons.repeat,
+                    keyboardType: TextInputType.number,
+                  ),
+                  const SizedBox(height: 22),
+                  NeoPrimaryButton(
+                    text: 'Save Workout',
+                    icon: Icons.save_rounded,
+                    onPressed: saveWorkout,
+                  ),
+                  if (message.isNotEmpty) ...[
+                    const SizedBox(height: 16),
+                    NeoSurface(
+                      padding: const EdgeInsets.all(14),
+                      radius: 18,
+                      color: backgroundColor,
+                      shadows: neoSoftShadows(context, distance: 3, blur: 8),
+                      child: Center(
+                        child: Text(
+                          message,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: isSuccess
+                                ? Colors.green.shade700
+                                : Theme.of(context).colorScheme.error,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
