@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'app_theme.dart';
 
+// Reusable neumorphic container used throughout the app.
 class NeoSurface extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry padding;
@@ -33,6 +34,8 @@ class NeoSurface extends StatelessWidget {
       decoration: BoxDecoration(
         color: color ?? neoSurfaceColor(context),
         borderRadius: BorderRadius.circular(radius),
+
+        // Uses default neumorphic shadows unless custom ones are passed in.
         boxShadow: shadows ?? neoShadows(context),
       ),
       child: child,
@@ -40,6 +43,7 @@ class NeoSurface extends StatelessWidget {
   }
 }
 
+// Small neumorphic icon tile used for buttons, cards, or UI highlights.
 class NeoIconTile extends StatelessWidget {
   final IconData icon;
   final double size;
@@ -73,6 +77,7 @@ class NeoIconTile extends StatelessWidget {
   }
 }
 
+// Selected navigation item with label and icon.
 class NeoNavSelected extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -108,6 +113,7 @@ class NeoNavSelected extends StatelessWidget {
   }
 }
 
+// Unselected navigation icon button.
 class NeoNavUnselected extends StatelessWidget {
   final IconData icon;
 
@@ -135,6 +141,7 @@ class NeoNavUnselected extends StatelessWidget {
   }
 }
 
+// Custom text field wrapped in a neumorphic surface.
 class NeoTextField extends StatelessWidget {
   final TextEditingController controller;
   final String label;
@@ -169,6 +176,8 @@ class NeoTextField extends StatelessWidget {
             color: neoSecondaryTextColor(context),
             fontWeight: FontWeight.w500,
           ),
+
+          // Removes default Flutter borders so the neumorphic design stays clean.
           border: InputBorder.none,
           enabledBorder: InputBorder.none,
           focusedBorder: InputBorder.none,
@@ -182,6 +191,7 @@ class NeoTextField extends StatelessWidget {
   }
 }
 
+// Painter that creates the pressed-in inner shadow effect.
 class _NeoInnerShadowPainter extends CustomPainter {
   final bool isDark;
   final double radius;
@@ -199,6 +209,7 @@ class _NeoInnerShadowPainter extends CustomPainter {
         RRect.fromRectAndRadius(rect, Radius.circular(radius)),
       );
 
+    // Light inner shadow.
     _drawInnerShadow(
       canvas,
       rect,
@@ -209,6 +220,7 @@ class _NeoInnerShadowPainter extends CustomPainter {
           : const Color(0xFFF8FBFF).withValues(alpha: 0.95),
     );
 
+    // Dark inner shadow.
     _drawInnerShadow(
       canvas,
       rect,
@@ -258,6 +270,7 @@ class _NeoInnerShadowPainter extends CustomPainter {
   }
 }
 
+// Main neumorphic button with a pressed animation.
 class NeoPrimaryButton extends StatefulWidget {
   final String text;
   final VoidCallback onPressed;
@@ -294,6 +307,8 @@ class _NeoPrimaryButtonState extends State<NeoPrimaryButton> {
             ? const Color(0xFF314563)
             : const Color(0xFFD7E4F8),
         borderRadius: BorderRadius.circular(22),
+
+        // Removes outer shadow when pressed to make it look inset.
         boxShadow: pressed ? [] : neoShadows(context, distance: 10, blur: 22),
       ),
       child: ClipRRect(
@@ -360,6 +375,7 @@ class _NeoPrimaryButtonState extends State<NeoPrimaryButton> {
   }
 }
 
+// Achievement card that becomes more visually highlighted based on progress.
 class NeoAchievementCard extends StatelessWidget {
   final String title;
   final String value;
@@ -381,6 +397,7 @@ class NeoAchievementCard extends StatelessWidget {
     final t = shineLevel.clamp(0.0, 1.0);
     final isDark = neoIsDark(context);
 
+    // Colors smoothly change as shineLevel increases.
     final surface = Color.lerp(
       neoSurfaceColor(context),
       isDark
